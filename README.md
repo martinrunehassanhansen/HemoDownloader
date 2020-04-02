@@ -28,4 +28,4 @@ Once you have installed Python 3 with pip, you have to install the following thr
 
 When all dependencies are installed, you can start the graphical user interface by exceuting the file HemoDownloader.pyw
 
-Futher instructions can be found in the menu 'Help' → 'Instructions for use'
+Futher instructions can be found in the menu 'Help' → 'Instructions for use' in the graphical user interface.
