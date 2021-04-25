@@ -1,5 +1,5 @@
 ##  setup.py
-##  A script to install dependencies for HemoDownloader 1.1
+##  A script to install dependencies for HemoDownloader 1.2
 
 ##  Copyright © 2019 Martin Rune Hassan Hansen <martinrunehassanhansen@ph.au.dk>
 
@@ -22,7 +22,7 @@ except:
     from distutils.core import setup
 
 setup(name='HemoDownloader.pyw',
-      version='1.1',
+      version='1.2',
       description='A GUI utility for downloading data from HemoCue® HbA1c devices',
       author='Martin Rune Hassan Hansen',
       author_email='martinrunehassanhansen@ph.au.dk',

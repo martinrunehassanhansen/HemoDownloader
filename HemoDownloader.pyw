@@ -1,4 +1,4 @@
-﻿##  HemoDownloader 1.1
+﻿##  HemoDownloader 1.2
 ##  A GUI UTILITY FOR DOWNLOADING DATA FROM HEMOCUE® HBA1C 501 DEVICES
 ##  Copyright © 2018-2019 Martin Rune Hassan Hansen <martinrunehassanhansen@ph.au.dk>
 
@@ -34,7 +34,12 @@
 ##      * Changed headings in exported files
 ##      * Added more tests of data integrity
 
-__version__ = 1.1
+##  VERSION 1.2, 2021-04-13
+##  Change compared with version 1.1:
+##  Bugfix:   Because of a difference in formatting, previous versions of HemoDownloader could not parse data from
+##  HemoCue HbA1c 501 devices running software software revision 2014-08-02. This has now been fixed.
+
+__version__ = 1.2
 
 
 ##  IMPORT NECESSARY MODULES
@@ -67,7 +72,7 @@ class settingsWindow(ttk.Frame):
     def __init__(self, master):
         #   Define geometry of window.
         ttk.Frame.__init__(self, master=master)
-        self.master.title('HemoDownloader 1.1 - Transfer data from HemoCue® HbA1c 501')
+        self.master.title('HemoDownloader 1.2 - Transfer data from HemoCue® HbA1c 501')
         self.master.resizable(False, False)
 
         #   Create menubar
@@ -594,6 +599,7 @@ class dataProcessingWindow(simpledialog.Dialog):
                     print('Expected number of observations, based on values listed in "Data no." =',highestDataNo - lowestDataNo + 1)
             except ValueError:
                 self.transmissionCompleted = False
+                print('Error in number of observations.')
 
     ##  IF THE BINARY DATA RECEIVED HAS AN UNKNOWN STRUCTURE, RECORD THIS.
     def setUnknownDataStructure(self):
@@ -607,10 +613,26 @@ class dataProcessingWindow(simpledialog.Dialog):
         for dataRow in self.receivedDataRows[1:]:
             if self.bugfixing == True:
                 print('\n\nNow parsing this row of data:\n',dataRow)
+
+            #   There is an inconsistency between software revision 2014-08-02 of the HemoCue HbA1c and the version of the
+            #   software that Hemodownloader was developed for. Software revision 2014-08-02 has two less line breaks in
+            #   the printed output. This is fixed to avoid problems in the code below.
+            if dataRow[3] == '':
+                dataRow.pop(3)
+            if dataRow[4] == '':
+                dataRow.pop(4)
+
+            #   Remove any barcodes
+            dataRowNoBarcodes = []
+            for cell in dataRow:
+                if not cell.startswith(r'\x1dh0\x1dw\x03\x1b$'):
+                    cell = cell.replace(r'\x00','')
+                    dataRowNoBarcodes.append(cell)
+            dataRow = dataRowNoBarcodes
                 
             dataID = dataRow[0]
             date = dataRow[1]
-            time = dataRow[2].replace('Time:','')
+            time = dataRow[2].replace('Time:','').replace('Time :','')
 
             inputDateTimeFormat = ''
             if r'[Y/M/D]' in date:
@@ -632,24 +654,17 @@ class dataProcessingWindow(simpledialog.Dialog):
           
             try:
                 dateTime = datetime.datetime.strptime(dateTimeString, inputDateTimeFormat)
-            
                 dateTimeString = dateTime.strftime("%Y-%m-%dT%H:%M")
-                hbA1cValues = dataRow[4].replace('HbA1c','').replace('mmol/mol','').replace(' ','').split('%')
+                hbA1cValues = dataRow[3].replace('HbA1c','').replace('mmol/mol','').replace(' ','').split('%')
                 hba1cPercent = hbA1cValues[0]
                 hba1cMmol = hbA1cValues[1]
-
-                #   If the data contains barcode information on operator ID, delete it before extracting operator ID.
-                if dataRow[7] != '':
-                    del dataRow[7]
-                operatorID = dataRow[7].replace(r'\x00','')
-                
-                #   If the data contains barcode information on patient ID, delete it before extracting patient ID.
-                if dataRow[9] != '':
-                    del dataRow[9]
-                patientID = dataRow[9].replace(r'\x00','')
-                
+                operatorID = dataRow[5]
+                patientID = dataRow[7]
                 self.parsedHbA1cData.append([dataID,dateTimeString,operatorID,patientID,hba1cPercent,hba1cMmol])
             except:
+                print(dataRow)
+                print('This causes an error. Press enter to continue.')
+                dummy_var = input()
                 self.transmissionCompleted = False
 
         try:
@@ -885,7 +900,7 @@ class helpWindow(simpledialog.Dialog):
         self.transient(self.master)
 
         #   Configure layout and position over parent window.
-        self.helpBoxTitle = "HemoDownloader 1.1 - " + self.helpType
+        self.helpBoxTitle = "HemoDownloader 1.2 - " + self.helpType
         self.title(self.helpBoxTitle)
         self.resizable(False, False)
         self.geometry(u'+{x}+{y}'.format(x = self.master.winfo_rootx(),
@@ -932,7 +947,7 @@ feedback = settingsWindow(root)
 
 
 ##   HELP TEXT
-root.help_text ="""HemoDownloader 1.1
+root.help_text ="""HemoDownloader 1.2
 A GUI utility for downloading data from HemoCue® HbA1c 501 devices
 
 This program allows biochemical data to be exported from the device HemoCue® HbA1c 501 and saved in a structured database for further processing in statistical packages.
@@ -969,10 +984,10 @@ How to transfer individual results:
 12. Wait for data to be transferred to computer."""
 
 ##   ABOUT TEXT
-root.about_text = """HemoDownloader 1.1
+root.about_text = """HemoDownloader 1.2
 A GUI utility for downloading data from HemoCue® HbA1c 501 devices
 
-Copyright © 2018-2019 Martin Rune Hassan Hansen
+Copyright © 2018-2021 Martin Rune Hassan Hansen
 
 To show software license, select 'Help' > 'License information'.
 
@@ -1001,9 +1016,9 @@ Physical addresses:
 
 ##   LICENSE TEXT
 root.license_text = """********************************************************************************
-*** HemoDownloader 1.1                                                       ***
+*** HemoDownloader 1.2                                                       ***
 ********************************************************************************
-Copyright © 2018-2019 Martin Rune Hassan Hansen
+Copyright © 2018-2021 Martin Rune Hassan Hansen
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -1017,7 +1032,7 @@ their own licenses listed below:
 * XlsxWriter
 * xlwt
 
-The compiled versions of HemoDownloader 1.1 were created using the program PyInstaller that is distributed under a modified GPL license, also listed below.
+The compiled versions of HemoDownloader 1.2 were created using the program PyInstaller that is distributed under a modified GPL license, also listed below.
 
 HemoCue is a registered trademark of HemoCue AB (Ängelholm, Sweden).
 
