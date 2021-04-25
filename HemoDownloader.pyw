@@ -662,9 +662,6 @@ class dataProcessingWindow(simpledialog.Dialog):
                 patientID = dataRow[7]
                 self.parsedHbA1cData.append([dataID,dateTimeString,operatorID,patientID,hba1cPercent,hba1cMmol])
             except:
-                print(dataRow)
-                print('This causes an error. Press enter to continue.')
-                dummy_var = input()
                 self.transmissionCompleted = False
 
         try:
