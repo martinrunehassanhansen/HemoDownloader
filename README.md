@@ -3,7 +3,7 @@ HemoDownloader is a third-party utility for downloading biochemical results from
 
 If you use HemoDownloader in your academic work, please cite both this GitHub repository (https://github.com/martinrunehassanhansen/HemoDownloader) and the following paper:
 
-Hansen, Martin Rune Hassan, Vivi Schlünssen, and Annelli Sandbæk. "HemoDownloader: Open source software utility to extract data from HemoCue HbA1c 501 devices in epidemiological studies of diabetes mellitus." Plos one 15.11 (2020): e0242087. https://doi.org/10.1371/journal.pone.0242087
+Hansen MRH, Schlünssen V, and Sandbæk A. "HemoDownloader: Open source software utility to extract data from HemoCue HbA1c 501 devices in epidemiological studies of diabetes mellitus." Plos one 15.11 (2020): e0242087. https://doi.org/10.1371/journal.pone.0242087
 
 # Disclaimer
 PLEASE NOTE THAT HEMODOWNLOADER IS INTENDED FOR USE IN EPIDEMIOLOGICAL STUDIES ONLY. THE SOFTWARE IS *NOT* APPROVED AS A MEDICAL DEVICE AND MUST NOT BE USED AS SUCH. THAT MEANS THE SOFTWARE MUST NOT BE USED ON HUMAN BEINGS FOR DIAGNOSIS, PREVENTION, MONITORING, PREDICTION, PROGNOSIS, TREATMENT OR ALLEVIATION OF DISEASE OR ANY OTHER MEDICAL PURPOSES.
